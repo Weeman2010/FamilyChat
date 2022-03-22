@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "791187320712",
+    "firebase_url": "https://family-chat-1f41a-default-rtdb.firebaseio.com",
+    "project_id": "family-chat-1f41a",
+    "storage_bucket": "family-chat-1f41a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791187320712:android:80b332fb6e99dd2920d43d",
+        "android_client_info": {
+          "package_name": "com.example.familychat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "791187320712-u171mlovjk7ersjfa8eef425d5fh34fj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1S72Sl8riEWdexNjRNO4rg-hU9Yy5hOI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "791187320712-u171mlovjk7ersjfa8eef425d5fh34fj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
