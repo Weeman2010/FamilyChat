@@ -8,10 +8,13 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 
 
 import com.example.familychat.Adapter.FragmentAdapter;
 import com.example.familychat.R;
+import com.example.familychat.Util.FirebaseHelper;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -21,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private TabLayout tabLayout;
     private FragmentStateAdapter fragmentAdapter;
+    private FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     private void InitWidges() {
         toolbar=findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -37,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
         tabLayout=findViewById(R.id.main_tablayout);
         fragmentAdapter= new FragmentAdapter(this);
         viewPager.setAdapter(fragmentAdapter);
+        fab=findViewById(R.id.main_fabbutton);
+
         TabLayoutMediator mediator=new TabLayoutMediator(tabLayout, viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
@@ -56,6 +63,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mediator.attach();
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()){
+                    case 0:
+                        fab.setVisibility(View.VISIBLE);
+                        fab.setImageResource(R.drawable.ic_message);
+                        break;
+                    case 1:
+                        fab.setVisibility(View.VISIBLE);
+                        fab.setImageResource(R.drawable.ic_call);
+                        break;
+                    case 2:
+                        fab.setVisibility(View.INVISIBLE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
 
     }
@@ -65,5 +100,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_menu,menu);
         return true;
     }
+
 
 }

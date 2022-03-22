@@ -21,6 +21,7 @@ public class ContactFragment extends Fragment {
    private RecyclerView recyclerView;
    private ContactAdapter adapter;
    private ArrayList<User> userArrayList=new ArrayList<>();
+
     public ContactFragment() {
         // Required empty public constructor
     }
