@@ -3,9 +3,13 @@ package com.example.familychat.Activitys;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,12 +30,15 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegisterActivity extends AppCompatActivity {
+    private static final int CAMERA_REQUEST = 222;
+    private static final int MY_CAMERA_PERMISSION_CODE =12 ;
     private CircleImageView profilImage;
     private EditText userName;
     private Button next;
     private Boolean setImage=false;
     private FirebaseAuth auth=FirebaseAuth.getInstance();
     private BottomSheetDialog dialog;
+    private ProgressDialog progressDialog ;
     private static final int IMAGE_REQUEST_CODE = 111;
     private Uri imageUri;
 
@@ -145,6 +152,15 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void openCamera() {
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+        {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+        }
+        else
+        {
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        }
 
     }
     @Override
@@ -163,9 +179,18 @@ public class RegisterActivity extends AppCompatActivity {
             profilImage.setImageURI(imageUri);
             uploadToFirebase();
         }
+        if (requestCode == CAMERA_REQUEST) {
+            Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+            profilImage.setImageBitmap(thumbnail);
+            uploadToFirebase();
+        }
+
     }
 
     private void uploadToFirebase() {
+        progressDialog =new ProgressDialog(this);
+        progressDialog.setMessage("Bitte warten...");
+        progressDialog.show();
     }
 
 }
