@@ -1,5 +1,6 @@
 package com.example.familychat.Activitys;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentResolver;
@@ -19,6 +20,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -30,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth auth=FirebaseAuth.getInstance();
     private BottomSheetDialog dialog;
     private static final int IMAGE_REQUEST_CODE = 111;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +145,27 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void openCamera() {
+
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==IMAGE_REQUEST_CODE && resultCode==RESULT_OK && data != null && data.getData() != null) {
+            imageUri = data.getData();
+            CropImage.activity(imageUri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1, 1)
+                    .start(this);
+        }
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            imageUri=result.getUri();
+            profilImage.setImageURI(imageUri);
+            uploadToFirebase();
+        }
+    }
+
+    private void uploadToFirebase() {
     }
 
 }
