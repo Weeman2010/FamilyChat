@@ -20,27 +20,37 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.familychat.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegisterActivity extends AppCompatActivity {
-    private static final int CAMERA_REQUEST = 222;
-    private static final int MY_CAMERA_PERMISSION_CODE =12 ;
+
     private CircleImageView profilImage;
     private EditText userName;
     private Button next;
     private Boolean setImage=false;
     private FirebaseAuth auth=FirebaseAuth.getInstance();
-    private BottomSheetDialog dialog;
+
     private ProgressDialog progressDialog ;
-    private static final int IMAGE_REQUEST_CODE = 111;
-    private Uri imageUri;
+    private Uri imageUri=null;
+    private DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Users");
+    private StorageReference storageReference= FirebaseStorage.getInstance().getReference().child("Images");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,21 +75,20 @@ public class RegisterActivity extends AppCompatActivity {
               else
               {
                   registerUser();
-                  startMainactivity();
+
               }
           }
       });
       profilImage.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            showBottomSheetPicture();
+              CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1,1)
+                      .start(RegisterActivity.this);
           }
       });
     }
 
-    private void registerUser() {
 
-    }
 
     @Override
     protected void onStart() {
@@ -95,48 +104,7 @@ public class RegisterActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-    private void showBottomSheetPicture() {
-        View view= getLayoutInflater().inflate(R.layout.bottom_sheet_pick,null);
-        dialog=new BottomSheetDialog(this);
-        dialog.setContentView(view);
-        view.findViewById(R.id.bottom_sheet_delete).setVisibility(View.GONE);
-        ((View) view.findViewById(R.id.bottom_sheet_camera)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openCamera();
-                dialog.dismiss();
-            }
-        });
 
-        ((View) view.findViewById(R.id.bottom_sheet_gallery)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openGallery();
-                dialog.dismiss();
-            }
-        });
-
-        ((View) view.findViewById(R.id.bottom_sheet_delete)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deletePicture();
-                dialog.dismiss();
-            }
-        });
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                dialog=null;
-            }
-        });
-        dialog.show();
-
-
-    }
-
-    private void deletePicture() {
-
-    }
     private String getFileExtension(Uri imageUri) {
         ContentResolver contentResolver =getContentResolver();
         MimeTypeMap mimeTypeMap=MimeTypeMap.getSingleton();
@@ -144,46 +112,28 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private void openGallery() {
-        Intent intent=new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,"Bild auswählen"),IMAGE_REQUEST_CODE);
-    }
-
-    private void openCamera() {
-        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-        {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-        }
-        else
-        {
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
-        }
-
-    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==IMAGE_REQUEST_CODE && resultCode==RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            CropImage.activity(imageUri)
-                    .setGuidelines(CropImageView.Guidelines.ON)
-                    .setAspectRatio(1, 1)
-                    .start(this);
-        }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            imageUri=result.getUri();
-            profilImage.setImageURI(imageUri);
-            uploadToFirebase();
+            if (resultCode == RESULT_OK) {
+                imageUri = result.getUri();
+                profilImage.setImageURI(imageUri);
+
+            }
         }
-        if (requestCode == CAMERA_REQUEST) {
-            Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            profilImage.setImageBitmap(thumbnail);
-            uploadToFirebase();
-        }
+
+    }
+
+    private void registerUser() {
+        auth.signInAnonymously().addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                uploadToFirebase();
+            }
+        });
+
 
     }
 
@@ -191,6 +141,47 @@ public class RegisterActivity extends AppCompatActivity {
         progressDialog =new ProgressDialog(this);
         progressDialog.setMessage("Bitte warten...");
         progressDialog.show();
+        if(imageUri !=null) {
+            storageReference.child(auth.getCurrentUser().getUid()).putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                    while (!uriTask.isSuccessful()) ;
+                    Uri downloadUri = uriTask.getResult();
+                    final String download_url = String.valueOf(downloadUri);
+
+
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("imageProfile", download_url);
+                    hashMap.put("Name", userName.getText().toString());
+                    hashMap.put("userID", auth.getCurrentUser().getUid());
+                    rootRef.setValue(hashMap)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    progressDialog.dismiss();
+                                    startMainactivity();
+                                }
+                            });
+                }
+
+
+
+            });
+        }else{
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("Image", "");
+            hashMap.put("Name", userName.getText().toString());
+            hashMap.put("userID", auth.getCurrentUser().getUid());
+            rootRef.child(auth.getCurrentUser().getUid()).setValue(hashMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            progressDialog.dismiss();
+                            startMainactivity();
+                        }
+                    });
+        }
     }
 
 }

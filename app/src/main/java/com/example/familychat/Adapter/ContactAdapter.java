@@ -21,6 +21,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     private ArrayList<User> userArrayList;
     private Context context;
 
+
     public ContactAdapter(ArrayList<User> userArrayList, Context context) {
         this.userArrayList = userArrayList;
         this.context = context;
@@ -37,6 +38,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ContactAdapter.ViewHolder holder, int position) {
           holder.userName.setText(userArrayList.get(position).getUserName());
+          if( ! userArrayList.get(position).getUserImageURL().equals("")){
+          Picasso.get().load(userArrayList.get(position).getUserImageURL()).into(holder.profilImage);
+          };
 
     }
 
@@ -50,8 +54,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         private TextView userName;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemView.findViewById(R.id.contactlist_profilimage);
-            itemView.findViewById(R.id.contactlist_username);
+
+           profilImage= itemView.findViewById(R.id.contactlist_profilimage);
+           userName= itemView.findViewById(R.id.contactlist_username);
         }
     }
 }

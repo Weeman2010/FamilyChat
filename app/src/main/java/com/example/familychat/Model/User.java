@@ -13,6 +13,18 @@ public class User {
         this.userImageURL = userImageURL;
     }
 
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setUserImageURL(String userImageURL) {
+        this.userImageURL = userImageURL;
+    }
+
     public String getUserID() {
         return userID;
     }
