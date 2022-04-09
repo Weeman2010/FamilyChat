@@ -41,7 +41,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Holder
     private List<Chatlist> chatlist;
     private FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Messages");
-    private String last_msg,last_msg_type;
+    private String last_msg,last_msg_type="";
 
     public ChatListAdapter(Context context, List<Chatlist> chatlist) {
         this.context = context;
@@ -107,6 +107,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.Holder
                     chat.getReceiver().equals(userID) &&chat.getSender().equals(firebaseUser.getUid())){
                         last_msg= chat.getTextMessage();
                         last_msg_type=chat.getType();
+
                         date.setText(chat.getDateTime().substring(11,16));
                     }
                     chatlist.get(position).setDate(chat.getDateTime());

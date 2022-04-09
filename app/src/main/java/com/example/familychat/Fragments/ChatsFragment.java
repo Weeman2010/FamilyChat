@@ -64,6 +64,7 @@ public class ChatsFragment extends Fragment {
         String currentUser=FirebaseAuth.getInstance().getCurrentUser().getUid();
         reference=FirebaseDatabase.getInstance().getReference();
         DatabaseReference userInfo=FirebaseDatabase.getInstance().getReference().child("Users");
+
         reference.child("Chats").child(currentUser).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
