@@ -2,4 +2,5 @@
     <string name="app_name">FamilyChat</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="AgoraID">26afc21c7fec49588c08f818b30fe77d</string>
 </resources>

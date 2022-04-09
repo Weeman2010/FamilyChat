@@ -6,16 +6,26 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 
 import com.example.familychat.Adapter.FragmentAdapter;
+import com.example.familychat.Notification.NotificationService;
 import com.example.familychat.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.vanniktech.emoji.EmojiManager;
+import com.vanniktech.emoji.EmojiProvider;
+import com.vanniktech.emoji.emoji.EmojiCategory;
+
+import io.agora.rtc.RtcEngine;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,14 +33,16 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private TabLayout tabLayout;
     private FragmentStateAdapter fragmentAdapter;
-    private FloatingActionButton fab;
+    private FloatingActionButton fab_call,fab_message;
+    public static boolean newChat=false;
+    public static boolean newCall=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-
         InitWidges();
-
     }
 
 
@@ -41,8 +53,24 @@ public class MainActivity extends AppCompatActivity {
         tabLayout=findViewById(R.id.main_tablayout);
         fragmentAdapter= new FragmentAdapter(this);
         viewPager.setAdapter(fragmentAdapter);
-        fab=findViewById(R.id.main_fabbutton);
-
+        fab_call=findViewById(R.id.main_fabbutton_call);
+        fab_message=findViewById(R.id.main_fabbutton_message);
+        fab_message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newChat=true;
+                TabLayout.Tab tab = tabLayout.getTabAt(Integer.parseInt("2"));
+                tab.select();
+            }
+        });
+        fab_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newCall=true;
+                TabLayout.Tab tab = tabLayout.getTabAt(Integer.parseInt("2"));
+                tab.select();
+            }
+        });
         TabLayoutMediator mediator=new TabLayoutMediator(tabLayout, viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
@@ -67,15 +95,17 @@ public class MainActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()){
                     case 0:
-                        fab.setVisibility(View.VISIBLE);
-                        fab.setImageResource(R.drawable.ic_message);
+                        fab_call.setVisibility(View.GONE);
+                        fab_message.setVisibility(View.VISIBLE);
+
                         break;
                     case 1:
-                        fab.setVisibility(View.VISIBLE);
-                        fab.setImageResource(R.drawable.ic_call);
+                        fab_call.setVisibility(View.VISIBLE);
+                        fab_message.setVisibility(View.GONE);
                         break;
                     case 2:
-                        fab.setVisibility(View.INVISIBLE);
+                        fab_call.setVisibility(View.GONE);
+                        fab_message.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -100,5 +130,36 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
+        switch (item.getItemId()){
+
+            case R.id.menu_settings:
+                startSettingsActivity();
+                break;
+
+        }
+        return true;
+    }
+
+    private void startSettingsActivity() {
+        Intent intent=new Intent(MainActivity.this,SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
+        //NotificationService.isRunning=false;
+    }
+
+    @Override
+    protected void onStart() {
+
+        super.onStart();
+
+        //NotificationService.isRunning=true;
+    }
 }

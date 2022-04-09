@@ -64,18 +64,30 @@
 
 
     </androidx.viewpager2.widget.ViewPager2>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/main_fabbutton_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="15dp"
-        app:tint="@color/white"
         android:backgroundTint="@color/primary"
         android:src="@drawable/ic_message"
-        android:id="@+id/main_fabbutton"
-        />
+        app:tint="@color/white" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/main_fabbutton_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
+        android:backgroundTint="@color/primary"
+        android:src="@drawable/ic_call"
+        app:tint="@color/white"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

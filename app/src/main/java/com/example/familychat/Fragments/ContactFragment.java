@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.familychat.Adapter.ContactAdapter;
+import com.example.familychat.Interfaces.ContactOnClick;
 import com.example.familychat.Model.User;
 import com.example.familychat.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,13 +28,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 
-public class ContactFragment extends Fragment {
+public class ContactFragment extends Fragment implements ContactOnClick{
     private static final String TAG = "CONTACT";
     private RecyclerView recyclerView;
    private ContactAdapter adapter;
    private ArrayList<User> userArrayList=new ArrayList<>();
    private String userID;
    private DatabaseReference rootRef;
+
     public ContactFragment() {
         // Required empty public constructor
     }
@@ -50,10 +53,8 @@ public class ContactFragment extends Fragment {
         // Inflate the layout for this fragment
         View v=inflater.inflate(R.layout.fragment_contact, container, false);
         userArrayList = getUserFromFirebase();
-
         recyclerView=v.findViewById(R.id.contact_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
-
 
         return v;
     }
@@ -66,10 +67,8 @@ public class ContactFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 if(!snapshot.child("userID").getValue().equals(userID)){
-                    Log.d(TAG, "onChildAdded: "+snapshot.child("userID").getValue());
-                    Log.d(TAG, "onChildAdded2: "+userID);
-                    userArrayList.add(new User(snapshot.child("userID").getValue().toString(),snapshot.child("Name").getValue().toString(),snapshot.child("Image").getValue().toString()));
-                    adapter=new ContactAdapter(userArrayList,getContext());
+                    userArrayList.add(new User(snapshot.child("userID").getValue().toString(),snapshot.child("Name").getValue().toString(),snapshot.child("Image").getValue().toString(),""));
+                    adapter=new ContactAdapter(userArrayList,getContext(),ContactFragment.this);
                     recyclerView.setAdapter(adapter);
                 }
             }
@@ -119,5 +118,10 @@ public class ContactFragment extends Fragment {
         });
 
         return userArrayList;
+    }
+
+    @Override
+    public void onClick(View view) {
+
     }
 }

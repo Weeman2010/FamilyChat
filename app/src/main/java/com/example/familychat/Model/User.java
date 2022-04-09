@@ -6,11 +6,13 @@ public class User {
     private String userID;
     private String userName;
     private String userImageURL;
+    private String token;
 
-    public User(String userID, String userName, String userImageURL) {
+    public User(String userID, String userName, String userImageURL,String token) {
         this.userID = userID;
         this.userName = userName;
         this.userImageURL = userImageURL;
+        this.token=token;
     }
 
     public void setUserID(String userID) {

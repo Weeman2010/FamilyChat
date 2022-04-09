@@ -6,17 +6,44 @@
         <entry key="..\:/Users/Sven/AndroidStudioProjects/FamilyChat/app/src/main/res/layout/activity_main.xml" value="0.2957427536231884" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/bg_text_chat_left.xml" value="0.115" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/bg_text_chat_right.xml" value="0.115" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_call.xml" value="0.23" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_camera.xml" value="0.1645" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_data.xml" value="0.1645" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_emoticon.xml" value="0.1645" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_gallery.xml" value="0.115" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_help.xml" value="0.1645" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_icon_background.xml" value="0.1645" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_info.xml" value="0.1645" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1645" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_message.xml" value="0.1645" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_mic_off.xml" value="0.2985" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_mic_on.xml" value="0.2985" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_more.xml" value="0.115" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_notification.xml" value="0.115" />
-        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/activity_main.xml" value="0.18" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_search.xml" value="0.1645" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_videocall.xml" value="0.23" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_voice.xml" value="0.23" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/drawable/ic_volume_off.xml" value="0.2985" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/activity_chat.xml" value="0.22" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/activity_in_coming_call.xml" value="0.22" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/activity_in_coming_video_call_accept.xml" value="0.25" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/activity_out_going_call.xml" value="0.446875" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/activity_register.xml" value="0.1" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/activity_settings.xml" value="0.25" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/activity_video_call.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/adapter_calllist_item.xml" value="0.5" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/adapter_chatlist_item.xml" value="0.33" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/bottom_sheet_pick.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/chat_item_left.xml" value="0.5" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/chat_item_right.xml" value="0.33" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/contactlist_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/fragment_call.xml" value="0.1" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/fragment_chats.xml" value="0.1" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/fragment_contact.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/layout/incomingvideocall_layout.xml" value="0.19791666666666666" />
         <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/menu/main_menu.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/Sven/StudioProjects/FamilyChat/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.161" />
       </map>
     </option>
   </component>

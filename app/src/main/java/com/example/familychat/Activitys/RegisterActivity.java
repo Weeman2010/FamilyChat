@@ -4,15 +4,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -20,6 +25,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.familychat.R;
+import com.example.familychat.Util.IO_Helper;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -28,14 +34,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+import com.vanniktech.emoji.EmojiManager;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -46,7 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button next;
     private Boolean setImage=false;
     private FirebaseAuth auth=FirebaseAuth.getInstance();
-
+    private String token="";
     private ProgressDialog progressDialog ;
     private Uri imageUri=null;
     private DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -54,11 +63,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_register);
         FirebaseAuth auth=FirebaseAuth.getInstance();
-        auth.signOut();
+
         InitWidges();
+
     }
 
     private void InitWidges() {
@@ -75,7 +87,6 @@ public class RegisterActivity extends AppCompatActivity {
               else
               {
                   registerUser();
-
               }
           }
       });
@@ -93,9 +104,21 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!Settings.canDrawOverlays(this)){
+                Intent myIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                startActivity(myIntent);
+            }
+        }
+        checkRunTimePermission();
+
         if(auth.getCurrentUser() != null){
             startMainactivity();
+            finish();
         }
+
+
     }
 
     private void startMainactivity() {
@@ -120,21 +143,33 @@ public class RegisterActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 imageUri = result.getUri();
                 profilImage.setImageURI(imageUri);
-
+                BitmapDrawable draw = (BitmapDrawable) profilImage.getDrawable();
+                Bitmap bitmap = draw.getBitmap();
+                IO_Helper.saveImage(bitmap,"profilbild",getApplicationContext());
             }
         }
 
     }
 
     private void registerUser() {
+        FirebaseMessaging.getInstance ().getToken ()
+                .addOnCompleteListener ( task -> {
+                    if (!task.isSuccessful ()) {
+                        //Could not get FirebaseMessagingToken
+                        return;
+                    }
+                    if (null != task.getResult ()) {
+                        //Got FirebaseMessagingToken
+                        token = Objects.requireNonNull ( task.getResult () );
+                        //Use firebaseMessagingToken further
+                    }
+                } );
         auth.signInAnonymously().addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
                 uploadToFirebase();
             }
         });
-
-
     }
 
     private void uploadToFirebase() {
@@ -150,12 +185,12 @@ public class RegisterActivity extends AppCompatActivity {
                     Uri downloadUri = uriTask.getResult();
                     final String download_url = String.valueOf(downloadUri);
 
-
                     HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("imageProfile", download_url);
-                    hashMap.put("Name", userName.getText().toString());
+                    hashMap.put("Image", download_url);
+                    hashMap.put("Name", userName.getText().toString().trim());
                     hashMap.put("userID", auth.getCurrentUser().getUid());
-                    rootRef.setValue(hashMap)
+                    hashMap.put("token",token);
+                    rootRef.child(auth.getCurrentUser().getUid()).setValue(hashMap)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -164,15 +199,13 @@ public class RegisterActivity extends AppCompatActivity {
                                 }
                             });
                 }
-
-
-
             });
         }else{
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("Image", "");
             hashMap.put("Name", userName.getText().toString());
             hashMap.put("userID", auth.getCurrentUser().getUid());
+            hashMap.put("token",token);
             rootRef.child(auth.getCurrentUser().getUid()).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -182,6 +215,65 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+    private void checkRunTimePermission() {
+        String[] permissionArrays = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.RECORD_AUDIO};
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissionArrays, 11111);
+        } else {
+           startMainactivity();
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean isPermitted = false;
+        boolean openDialogOnce = true;
+        if (requestCode == 11111) {
+            for (int i = 0; i < grantResults.length; i++) {
+                String permission = permissions[i];
+
+                isPermitted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
+
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    // user rejected the permission
+                    boolean showRationale = shouldShowRequestPermissionRationale(permission);
+                    if (!showRationale) {
+                        //execute when 'never Ask Again' tick and permission dialog not show
+                    } else {
+                        if (openDialogOnce) {
+                            alertView();
+                        }
+                    }
+                }
+            }
+
+            if (isPermitted){
+
+            }
+
+        }
+    }
+    private void alertView() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this, R.style.AlertDialog_AppCompat);
+
+        dialog.setTitle("Berechtigung verweigert")
+                .setInverseBackgroundForced(true)
+                //.setIcon(R.drawable.ic_info_black_24dp)
+                .setMessage("Ohne die Berechtigungen sind funktionen der App nicht nutzbar")
+                .setNegativeButton("Sicher", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialoginterface, int i) {
+                        dialoginterface.dismiss();
+                    }
+                })
+                .setPositiveButton("Wiederholen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialoginterface, int i) {
+                        dialoginterface.dismiss();
+                        checkRunTimePermission();
+                    }
+                }).show();
     }
 
 }
